@@ -1,0 +1,11 @@
+.link {
+    display: block;
+}
+
+form label,
+form input,
+form textarea {
+    display: block;
+    margin-bottom: 10px;
+}
+

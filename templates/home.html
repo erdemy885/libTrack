@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>libTrack</title>
+{% endblock %}
+
+{% block body %}
+<h1>Welcome to libTrack</h1>
+<a href="{{ url_for('dashboard') }}" class="link">Dashboard</a>
+<a class="link">Log in</a>
+<a href="{{ url_for('signup')}}" class="link">Sign up</a>
+{% endblock %}
