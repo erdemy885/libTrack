@@ -25,10 +25,10 @@ if __name__ == "__main__":
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    from main import main
+    from routes.main import main
     app.register_blueprint(main)
 
-    from auth import auth
+    from routes.auth import auth
     app.register_blueprint(auth)
 
     app.run(debug=True)
