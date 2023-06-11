@@ -7,6 +7,16 @@ main = Blueprint('main', __name__)
 def home():
     return render_template('home.html')
 
+@main.route('/lookup/<id>')
+@login_required
+def lookup(id):
+    return str(id)
+
+@main.route('/scanner')
+@login_required
+def scanner():
+    return render_template('scanner.html')
+
 @main.route('/dashboard')
 @login_required
 def dashboard():
