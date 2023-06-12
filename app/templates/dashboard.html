@@ -7,12 +7,21 @@
 {% block body %}
 <h1>Dashboard</h1>
 <h2>Welcome {{ name }}</h2>
-<button onclick="createCategory()">Create a new category</button>
+<div><a href="{{ url_for('main.view_categories') }}">All Categories</a></div>
+<div><button onclick="createCategory()">Create a new category</button></div>
+<div><button onclick="scanner()">Scan Barcode</button></div>
+<div><button onclick="logout()">Log out</button></div>
 <script>
     function createCategory() {
-        window.location.href = "{{ url_for('main.create_category') }}"
+        window.location.href = "{{ url_for('main.create_category') }}";
+    }
+
+    function scanner() {
+        window.location.href = "{{ url_for('main.scanner') }}";
+    }
+
+    function logout() {
+        window.location.href = "{{ url_for('auth.logout') }}"
     }
 </script>
-<div><a href="{{ url_for('main.scanner') }}">Scan Barcode</a></div>
-<div><a href="{{ url_for('auth.logout') }}">Log out</a></div>
 {% endblock %}

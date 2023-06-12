@@ -24,6 +24,12 @@ def scanner():
 def dashboard():
     return render_template('dashboard.html', name=current_user.username)
 
+@main.route('/categories')
+@login_required
+def view_categories():
+    categories = Category.query.filter_by(user_id=current_user.id).all()
+    return render_template('allcategories.html', categories=categories)
+
 @main.route('/newcategory', methods=['GET', 'POST'])
 @login_required
 def create_category():
