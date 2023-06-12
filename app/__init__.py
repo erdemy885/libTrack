@@ -9,7 +9,7 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = 'secret-key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{path.join(path.dirname(path.abspath(__file__)), 'db.sqlite')}"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db.sqlite"
 
     db.init_app(app)
 
