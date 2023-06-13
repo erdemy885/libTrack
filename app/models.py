@@ -5,15 +5,20 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    categories = db.relationship('Category', backref='user')
+    shelves = db.relationship('Shelf', backref='user')
+
+class Shelf(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    num = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    categories = db.relationship('Category', backref='shelf')
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     num = db.Column(db.Integer)
     name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(5), nullable=False)
-    shelf = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    shelf_id = db.Column(db.Integer, db.ForeignKey('shelf.id'))
     books = db.relationship('Book', backref='category')
 
 class Book(db.Model):

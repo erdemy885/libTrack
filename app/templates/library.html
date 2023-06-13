@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>All Categories</title>
+<title>Library</title>
 <style>
     table {
         border-collapse: collapse;
@@ -20,22 +20,22 @@
 {% endblock %}
 
 {% block body %}
-<h1>Categories</h1>
+<h1>Shelves</h1>
 <div><a href="{{ url_for('main.dashboard') }}">Dashboard</a></div>
 <table>
     <tr>
-        <th>Category Number</th>
-        <th>Category Name</th>
-        <th>Category Code</th>
         <th>Shelf Number</th>
     </tr>
     {% for row in data %}
         <tr>
             <td>{{ row.num }}</td>
-            <td>{{ row.name }}</td>
-            <td>{{ row.code }}</td>
-            <td>{{ row.shelf }}</td>
         </tr>
     {% endfor %}
 </table>
+<button onclick="newshelf()">Add Shelf</button>
+<script>
+    function newshelf() {
+        window.location.href = "{{ url_for('main.addshelf') }}"
+    }
+</script>
 {% endblock %}
