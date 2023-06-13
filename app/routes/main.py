@@ -5,23 +5,6 @@ from .. import db
 
 main = Blueprint('main', __name__)
 
-@main.route('/library')
-@login_required
-def library():
-    shelves = Shelf.query.filter_by(user_id=current_user.id).all()
-    return render_template('library.html', data=shelves)
-
-@main.route('/addshelf')
-@login_required
-def addshelf():
-    num = Shelf.query.filter_by(user_id=current_user.id).count() + 1
-    new_shelf = Shelf(num=num, user=current_user)
-    
-    db.session.add(new_shelf)
-    db.session.commit()
-
-    return redirect(url_for('main.library'))
-
 @main.route('/')
 def home():
     return render_template('home.html')
@@ -40,27 +23,3 @@ def scanner():
 @login_required
 def dashboard():
     return render_template('dashboard.html', name=current_user.username)
-
-@main.route('/categories')
-@login_required
-def view_categories():
-    categories = Category.query.filter_by(user_id=current_user.id).all()
-    return render_template('allcategories.html', data=categories)
-
-@main.route('/newcategory', methods=['GET', 'POST'])
-@login_required
-def create_category():
-    if request.method == 'POST':
-        num = Category.query.filter_by(user_id=current_user.id).count() + 1
-        name = request.form.get('name')
-        code = request.form.get('code')
-        shelf = request.form.get('shelf')
-
-        new_category = Category(num=num, name=name, code=code, shelf=shelf, user=current_user)
-
-        db.session.add(new_category)
-        db.session.commit()
-
-        return redirect(url_for('main.dashboard'))
-    if request.method == 'GET':
-        return render_template('create_category.html')

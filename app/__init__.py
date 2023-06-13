@@ -31,4 +31,7 @@ def create_app():
     from .routes.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
+    from .routes.library import library as library_blueprint
+    app.register_blueprint(library_blueprint, url_prefix='/library')
+
     return app

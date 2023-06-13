@@ -7,7 +7,7 @@
 {% block body %}
 <h1>Dashboard</h1>
 <h2>Welcome {{ name }}</h2>
-<div><a href="{{ url_for('main.library') }}">Library</a></div>
+<div><a href="{{ url_for('library.home') }}">Library</a></div>
 <div><button onclick="scanner()">Scan Barcode</button></div>
 <div><button onclick="logout()">Log out</button></div>
 <script>
