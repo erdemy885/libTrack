@@ -11,6 +11,16 @@ def home():
     shelves = Shelf.query.filter_by(user_id=current_user.id).all()
     return render_template('library.html', data=shelves)
 
+@library.route('/shelf/<int:shelfid>')
+@login_required
+def shelf(shelfid):
+    current_shelf = Shelf.query.get(shelfid)
+    if current_shelf.user_id == current_user.id:
+        categories = Category.query.filter_by(shelf_id=shelfid).all()
+        return render_template('shelf.html', shelf=current_shelf, data=categories)
+    else:
+        return "Restricted Access"
+
 @library.route('/addshelf')
 @login_required
 def addshelf():
@@ -21,3 +31,31 @@ def addshelf():
     db.session.commit()
 
     return redirect(url_for('library.home'))
+
+@library.route('/addcategory/<int:shelfid>', methods=['GET', 'POST'])
+@login_required
+def addcategory(shelfid):
+    if request.method == 'GET':
+        return render_template('addcategory.html')
+    if request.method == 'POST':
+        current_shelf = Shelf.query.get(shelfid)
+        if current_shelf.user_id == current_user.id:
+            name = request.form.get('name')
+            code = request.form.get('code')
+
+            num = 1
+            for shelf in current_user.shelves:
+                for category in shelf.categories:
+                    num += 1
+
+            new_category = Category(num=num, name=name, code=code, shelf=current_shelf)
+
+            db.session.add(new_category)
+            db.session.commit()
+
+            return redirect(url_for('library.shelf', shelfid=shelfid))
+        else:
+            return "Restricted Access"
+
+        
+        
