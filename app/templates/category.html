@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>{{ current_category.name }}</title>
+<style>
+    table {
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .movecat {
+        border: none;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<h1>{{ current_category.name }}</h1>
+<div><a href="{{ url_for('library.shelf', shelfid=current_category.shelf_id) }}">Shelf {{ current_category.shelf.num }}</a></div>
+<table>
+    <h2>Books</h2>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Number in Series</th>
+        <th>Code</th>
+        <th>Status</th>
+    </tr>
+    {% for row in data %}
+        <tr>
+            <td>{{ row.title }}</td>
+            <td>{{ row.author }}</td>
+            <td>{{ row.num_in_series }}</td>
+            <td>{{ row.code }}</td>
+            <td>{{ row.status }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -25,9 +25,9 @@
 
 {% block body %}
 <h1>Shelf {{ current_shelf.num }}</h1>
-<h2>Categories</h2>
 <div><a href="{{ url_for('library.home') }}">Library</a></div>
 <table>
+    <h2>Categories</h2>
     <tr>
         <th>Category Number</th>
         <th>Category Name</th>
@@ -36,7 +36,7 @@
     {% for row in data %}
         <tr>
             <td>{{ row.num }}</td>
-            <td>{{ row.name }}</td>
+            <td><a href="{{ url_for('library.category', catid=row.id) }}">{{ row.name }}</a></td>
             <td>{{ row.code }}</td>
             <td class="movecat">
                 <select id="select{{ row.id }}">

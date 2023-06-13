@@ -2,12 +2,17 @@
 
 {% block head %}
 <title>Dashboard</title>
+<style>
+    button {
+        margin-bottom: 10px;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
 <h1>Dashboard</h1>
 <h2>Welcome {{ name }}</h2>
-<div><a href="{{ url_for('library.home') }}">Library</a></div>
+<h3><div><a href="{{ url_for('library.home') }}">Library</a></div></h3>
 <div><button onclick="scanner()">Scan Barcode</button></div>
 <div><button onclick="logout()">Log out</button></div>
 <script>

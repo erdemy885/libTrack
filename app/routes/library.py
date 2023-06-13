@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
-from ..models import Shelf, Category
+from ..models import Shelf, Category, Book
 from .. import db
 
 library = Blueprint('library', __name__)
@@ -10,6 +10,16 @@ library = Blueprint('library', __name__)
 def home():
     shelves = Shelf.query.filter_by(user_id=current_user.id).all()
     return render_template('library.html', data=shelves)
+
+@library.route('/category/<int:catid>')
+@login_required
+def category(catid):
+    current_category = Category.query.get(catid)
+    if current_category.shelf.user_id == current_user.id:
+        books = Book.query.filter_by(category_id=catid).all()
+        return render_template('category.html', data=books, current_category=current_category)
+    else:
+        return "Restricted Access"
 
 @library.route('/movecategory/<int:shelfid>/<int:catid>')
 @login_required
