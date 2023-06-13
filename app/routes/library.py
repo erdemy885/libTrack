@@ -11,13 +11,26 @@ def home():
     shelves = Shelf.query.filter_by(user_id=current_user.id).all()
     return render_template('library.html', data=shelves)
 
+@library.route('/movecategory/<int:shelfid>/<int:catid>')
+@login_required
+def movecategory(shelfid, catid):
+    target_shelf = Shelf.query.get(shelfid)
+    current_category = Category.query.get(catid)
+    if target_shelf.user_id == current_user.id and current_category.shelf.user_id == current_user.id:
+        current_category.shelf = target_shelf
+        db.session.add(current_category)
+        db.session.commit()
+        return redirect(url_for('library.shelf', shelfid=shelfid))
+    else:
+        return "Restricted Access"
+
 @library.route('/shelf/<int:shelfid>')
 @login_required
 def shelf(shelfid):
     current_shelf = Shelf.query.get(shelfid)
     if current_shelf.user_id == current_user.id:
         categories = Category.query.filter_by(shelf_id=shelfid).all()
-        return render_template('shelf.html', shelf=current_shelf, data=categories)
+        return render_template('shelf.html', current_shelf=current_shelf, data=categories, shelves=current_user.shelves)
     else:
         return "Restricted Access"
 

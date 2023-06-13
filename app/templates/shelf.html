@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>Shelf {{ shelfnum }}</title>
+<title>Shelf {{ current_shelf.num }}</title>
 <style>
     table {
         border-collapse: collapse;
@@ -16,11 +16,15 @@
     th {
         background-color: #f2f2f2;
     }
+
+    .movecat {
+        border: none;
+    }
 </style>
 {% endblock %}
 
 {% block body %}
-<h1>Shelf {{ shelf.num }}</h1>
+<h1>Shelf {{ current_shelf.num }}</h1>
 <h2>Categories</h2>
 <div><a href="{{ url_for('library.home') }}">Library</a></div>
 <table>
@@ -34,13 +38,31 @@
             <td>{{ row.num }}</td>
             <td>{{ row.name }}</td>
             <td>{{ row.code }}</td>
+            <td class="movecat">
+                <select id="select{{ row.id }}">
+                    <option value="">Select an Option</option>
+                    {% for shelf in shelves %}
+                        {% if shelf != current_shelf %}
+                            <option value="{{ url_for('library.movecategory', shelfid=shelf.id, catid=row.id) }}">Shelf {{ shelf.num }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <button onclick="redirect('select{{ row.id }}')">Move Category</button>
+            </td>
         </tr>
     {% endfor %}
 </table>
 <button onclick="newcategory()">Add Category</button>
 <script>
     function newcategory() {
-        window.location.href = "{{ url_for('library.addcategory', shelfid=shelf.id) }}"
+        window.location.href = "{{ url_for('library.addcategory', shelfid=current_shelf.id) }}"
+    }
+    function redirect(selectId) {
+        var selectElement = document.getElementById(selectId);
+        var selectedOption = selectElement.value;
+        if (selectedOption) {
+            window.location.href = selectedOption;
+        }
     }
 </script>
 {% endblock %}
