@@ -8,19 +8,13 @@ library = Blueprint('library', __name__)
 @library.route('/', methods=['POST', 'GET'])
 @login_required
 def home():
-    if request.method == 'GET':
-        shelves = current_user.shelves
-        return render_template('library.html', data=shelves, current_url=request.url)
     if request.method == 'POST':
         num = Shelf.query.filter_by(user_id=current_user.id).count() + 1
         new_shelf = Shelf(num=num, user=current_user)
-        
         db.session.add(new_shelf)
         db.session.commit()
-
-        shelves = current_user.shelves
-
-        return render_template('library.html', data=shelves, current_url=request.url)
+    shelves = current_user.shelves
+    return render_template('library.html', data=shelves, current_url=request.url)
 
 @library.route('/category/<int:catid>')
 @login_required
