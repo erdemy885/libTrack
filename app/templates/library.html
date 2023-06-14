@@ -32,10 +32,5 @@
         </tr>
     {% endfor %}
 </table>
-<button onclick="newshelf()">Add Shelf</button>
-<script>
-    function newshelf() {
-        window.location.href = "{{ url_for('library.addshelf') }}"
-    }
-</script>
+<form action="{{ current_url }}" method="POST"><input type="submit" value="Add Shelf"></form>
 {% endblock %}

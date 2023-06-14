@@ -5,11 +5,22 @@ from .. import db
 
 library = Blueprint('library', __name__)
 
-@library.route('/')
+@library.route('/', methods=['POST', 'GET'])
 @login_required
 def home():
-    shelves = Shelf.query.filter_by(user_id=current_user.id).all()
-    return render_template('library.html', data=shelves)
+    if request.method == 'GET':
+        shelves = current_user.shelves
+        return render_template('library.html', data=shelves, current_url=request.url)
+    if request.method == 'POST':
+        num = Shelf.query.filter_by(user_id=current_user.id).count() + 1
+        new_shelf = Shelf(num=num, user=current_user)
+        
+        db.session.add(new_shelf)
+        db.session.commit()
+
+        shelves = current_user.shelves
+
+        return render_template('library.html', data=shelves, current_url=request.url)
 
 @library.route('/category/<int:catid>')
 @login_required
@@ -43,17 +54,6 @@ def shelf(shelfid):
         return render_template('shelf.html', current_shelf=current_shelf, data=categories, shelves=current_user.shelves)
     else:
         return "Restricted Access"
-
-@library.route('/addshelf')
-@login_required
-def addshelf():
-    num = Shelf.query.filter_by(user_id=current_user.id).count() + 1
-    new_shelf = Shelf(num=num, user=current_user)
-    
-    db.session.add(new_shelf)
-    db.session.commit()
-
-    return redirect(url_for('library.home'))
 
 @library.route('/addcategory/<int:shelfid>', methods=['GET', 'POST'])
 @login_required
