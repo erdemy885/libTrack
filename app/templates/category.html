@@ -25,7 +25,7 @@
 
 {% block body %}
 <h1>{{ current_category.name }}</h1>
-<div><a href="{{ url_for('library.shelf', shelfid=current_category.shelf_id) }}">Shelf {{ current_category.shelf.num }}</a></div>
+<div><a href="{{ url_for('library.shelf', shelfnum=current_category.shelf.num) }}">Shelf {{ current_category.shelf.num }}</a></div>
 <table>
     <h2>Books</h2>
     <tr>

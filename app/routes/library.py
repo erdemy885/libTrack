@@ -8,23 +8,24 @@ library = Blueprint('library', __name__)
 @library.route('/', methods=['POST', 'GET'])
 @login_required
 def home():
+    shelves = current_user.shelves
     if request.method == 'POST':
-        num = Shelf.query.filter_by(user_id=current_user.id).count() + 1
+        num = len(shelves) + 1
         new_shelf = Shelf(num=num, user=current_user)
         db.session.add(new_shelf)
         db.session.commit()
-    shelves = current_user.shelves
-    return render_template('library.html', data=shelves, current_url=request.url)
+    return render_template('library.html', shelves=shelves, current_url=request.url)
 
-@library.route('/category/<int:catid>')
+@library.route('/shelf/<int:shelfnum>/category/<string:catcode>')
 @login_required
-def category(catid):
-    current_category = Category.query.get(catid)
-    if current_category.shelf.user_id == current_user.id:
-        books = Book.query.filter_by(category_id=catid).all()
-        return render_template('category.html', data=books, current_category=current_category)
-    else:
-        return "Restricted Access"
+def category(shelfnum, catcode):
+    current_shelf = [i for i in current_user.shelves if i.num == shelfnum]
+    if current_shelf:
+        current_category = [i for i in current_shelf[0].categories if i.code == catcode]
+        if current_category:
+            books = current_category[0].books
+            return render_template('category.html', data=books, current_category=current_category[0])
+    return "Shelf or Category does not exist"
 
 @library.route('/movecategory/<int:shelfid>/<int:catid>')
 @login_required
@@ -35,44 +36,21 @@ def movecategory(shelfid, catid):
         current_category.shelf = target_shelf
         db.session.add(current_category)
         db.session.commit()
-        return redirect(url_for('library.shelf', shelfid=shelfid))
+        return redirect(url_for('library.shelf', shelfnum=target_shelf.num))
     else:
         return "Restricted Access"
 
-@library.route('/shelf/<int:shelfid>')
+@library.route('/shelf/<int:shelfnum>', methods=['GET', 'POST'])
 @login_required
-def shelf(shelfid):
-    current_shelf = Shelf.query.get(shelfid)
-    if current_shelf.user_id == current_user.id:
-        categories = Category.query.filter_by(shelf_id=shelfid).all()
-        return render_template('shelf.html', current_shelf=current_shelf, data=categories, shelves=current_user.shelves)
-    else:
-        return "Restricted Access"
-
-@library.route('/addcategory/<int:shelfid>', methods=['GET', 'POST'])
-@login_required
-def addcategory(shelfid):
-    if request.method == 'GET':
-        return render_template('addcategory.html')
-    if request.method == 'POST':
-        current_shelf = Shelf.query.get(shelfid)
-        if current_shelf.user_id == current_user.id:
+def shelf(shelfnum):
+    current_shelf = [i for i in current_user.shelves if i.num == shelfnum]
+    if current_shelf:
+        if request.method == 'POST': #add category
             name = request.form.get('name')
             code = request.form.get('code')
-
-            num = 1
-            for shelf in current_user.shelves:
-                for category in shelf.categories:
-                    num += 1
-
-            new_category = Category(num=num, name=name, code=code, shelf=current_shelf)
-
+            num = len([j for i in current_user.shelves for j in i.categories]) + 1
+            new_category = Category(num=num, name=name, code=code, shelf=current_shelf[0])
             db.session.add(new_category)
             db.session.commit()
-
-            return redirect(url_for('library.shelf', shelfid=shelfid))
-        else:
-            return "Restricted Access"
-
-        
-        
+        return render_template('shelf.html', current_shelf=current_shelf[0], categories=current_shelf[0].categories, shelves=current_user.shelves, current_url=request.url)
+    return "Shelf does not exist"

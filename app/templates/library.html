@@ -26,9 +26,9 @@
     <tr>
         <th>Shelf Number</th>
     </tr>
-    {% for row in data %}
+    {% for shelf in shelves %}
         <tr>
-            <td><a href="{{ url_for('library.shelf', shelfid=row.id) }}">{{ row.num }}</a></td>
+            <td><a href="{{ url_for('library.shelf', shelfnum=shelf.num) }}">{{ shelf.num }}</a></td>
         </tr>
     {% endfor %}
 </table>
