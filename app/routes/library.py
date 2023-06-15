@@ -47,7 +47,7 @@ def shelf(shelfnum):
     if current_shelf:
         if request.method == 'POST': #add category
             name = request.form.get('name')
-            code = request.form.get('code')
+            code = request.form.get('code').upper()
             num = len([j for i in current_user.shelves for j in i.categories]) + 1
             new_category = Category(num=num, name=name, code=code, shelf=current_shelf[0])
             db.session.add(new_category)
