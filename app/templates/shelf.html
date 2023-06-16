@@ -16,56 +16,47 @@
     th {
         background-color: #f2f2f2;
     }
-
-    .movecat {
-        border: none;
-    }
 </style>
 {% endblock %}
 
 {% block body %}
 <h1>Shelf {{ current_shelf.num }}</h1>
 <div><a href="{{ url_for('library.home') }}">Library</a></div>
-<table>
-    <h2>Categories</h2>
-    <tr>
-        <th>Category Number</th>
-        <th>Category Name</th>
-        <th>Category Code</th>
-    </tr>
-    {% for category in categories %}
+<form id="movecat" action="{{ current_url }}" method="POST"></form>
+<form id="addcat" action="{{ current_url }}" method="POST"></form>
+    <table>
+        <h2>Categories</h2>
+        {% if get_flashed_messages() %}
+            <div>{{ get_flashed_messages()[0] }}</div>
+        {% endif %}
         <tr>
-            <td>{{ category.num }}</td>
-            <td><a href="{{ url_for('library.category', shelfnum=current_shelf.num, catcode=category.code) }}">{{ category.name }}</a></td>
-            <td>{{ category.code }}</td>
-            <td class="movecat">
-                <select id="select{{ category.id }}">
-                    <option value="">Select an Option</option>
-                    {% for shelf in shelves %}
-                        {% if shelf != current_shelf %}
-                            <option value="{{ url_for('library.movecategory', shelfid=shelf.id, catid=category.id) }}">Shelf {{ shelf.num }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                <button onclick="redirect('select{{ category.id }}')">Move Category</button>
-            </td>
+            <th>Category Number</th>
+            <th>Category Name</th>
+            <th>Category Code</th>
+            <th>Target Shelf</th>
         </tr>
-    {% endfor %}
-    <tr>
-        <form action="{{ current_url }}" method="POST">
-            <td><input type="submit" value="Add Category"></td>
-            <td><input type="text" name="name"></td>
-            <td><input type="text" name="code" maxlength="5"></td>
-        </form>
-    </tr>
-</table>
-<script>
-    function redirect(selectId) {
-        var selectElement = document.getElementById(selectId);
-        var selectedOption = selectElement.value;
-        if (selectedOption) {
-            window.location.href = selectedOption;
-        }
-    }
-</script>
+            {% for category in categories %}
+                <tr>
+                    <td>{{ category.num }}</td>
+                    <td><a href="{{ url_for('library.category', shelfnum=current_shelf.num, catcode=category.code) }}">{{ category.name }}</a></td>
+                    <td>{{ category.code }}</td>
+                    <td>
+                        <select name="target_shelves[]" form="movecat">
+                            <option value="">Select Shelf</option>
+                            {% for shelf in shelves %}
+                                {% if shelf != current_shelf %}
+                                    <option value="{{ shelf.id }}:{{ category.id }}">Shelf {{ shelf.num }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td><input type="submit" value="Add Category" form="addcat"></td>
+                <td><input type="text" name="name" required form="addcat"></td>
+                <td><input type="text" name="code" maxlength="5" required form="addcat"></td>
+                <td><input type="submit" value="Move Categories" form="movecat"></td>
+            </tr>
+    </table>
 {% endblock %}
