@@ -3,6 +3,10 @@
 {% block head %}
 <title>{{ current_category.name }}</title>
 <style>
+    th.multi-line {
+        white-space: normal;
+    }
+
     table {
         border-collapse: collapse;
     }
@@ -16,10 +20,6 @@
     th {
         background-color: #f2f2f2;
     }
-
-    .movecat {
-        border: none;
-    }
 </style>
 {% endblock %}
 
@@ -29,20 +29,37 @@
 <table>
     <h2>Books</h2>
     <tr>
+        <th>Code</th>
         <th>Title</th>
         <th>Author</th>
         <th>Number in Series</th>
-        <th>Code</th>
+        <th class="multi-line">Reference Word<br>(for alpha sort)</th>
         <th>Status</th>
     </tr>
     {% for row in data %}
         <tr>
+            <td>{{ row.code }}</td>
             <td>{{ row.title }}</td>
             <td>{{ row.author }}</td>
             <td>{{ row.num_in_series }}</td>
-            <td>{{ row.code }}</td>
+            <td>{{ row.reference }}</td>
             <td>{{ row.status }}</td>
         </tr>
     {% endfor %}
+    <tr>
+        <form>
+            <td><input type="submit" value="Add Book"></td>
+            <td><input type="text" name="title" required></td>
+            <td><input type="text" name="author" required></td>
+            <td><input type="number" name="num_in_series"></td>
+            <td><input type="text" maxlength="15" name="reference"></td>
+            <td>
+                <select name="status">
+                    <option value="true">Shelved</option>
+                    <option value="false">Checked Out</option>
+                </select>
+            </td>
+        </form>
+    </tr>
 </table>
 {% endblock %}

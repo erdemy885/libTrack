@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from ..models import Shelf, Category, Book
 from .. import db
@@ -14,6 +14,7 @@ def home():
         new_shelf = Shelf(num=num, user=current_user)
         db.session.add(new_shelf)
         db.session.commit()
+        return redirect(request.url)
     return render_template('library.html', shelves=shelves, current_url=request.url)
 
 @library.route('/shelf/<int:shelfnum>/category/<string:catcode>')
@@ -48,10 +49,12 @@ def shelf(shelfnum):
                         else:
                             flash('Could not move Category because either Target Shelf or Selected Category belongs to a different user')
                 db.session.commit()
+                return redirect(request.url)
             if name and code:
                 num = len([j for i in current_user.shelves for j in i.categories]) + 1
                 new_category = Category(num=num, name=name.title(), code=code.upper(), shelf=current_shelf[0])
                 db.session.add(new_category)
                 db.session.commit()
+                return redirect(request.url)
         return render_template('shelf.html', current_shelf=current_shelf[0], categories=current_shelf[0].categories, shelves=current_user.shelves, current_url=request.url)
     return "Shelf does not exist"

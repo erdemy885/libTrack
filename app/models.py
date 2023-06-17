@@ -27,5 +27,6 @@ class Book(db.Model):
     author = db.Column(db.String(100), nullable=False)
     num_in_series = db.Column(db.Integer)
     code = db.Column(db.String(15), nullable=False)
-    status = db.Column(db.String(10), nullable=False)
+    reference = db.Column(db.String(15), nullable=False)
+    status = db.Column(db.Boolean, default=True, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
