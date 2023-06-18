@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect
 from flask_login import login_required, current_user
 from ..models import Shelf, Category, Book
 from .. import db
@@ -17,7 +17,7 @@ def home():
         return redirect(request.url)
     return render_template('library.html', shelves=shelves, current_url=request.url)
 
-@library.route('/shelf/<int:shelfnum>/category/<string:catcode>')
+@library.route('/shelf/<int:shelfnum>/category/<string:catcode>', methods=['POST', 'GET'])
 @login_required
 def category(shelfnum, catcode):
     current_shelf = [i for i in current_user.shelves if i.num == shelfnum]
@@ -25,7 +25,21 @@ def category(shelfnum, catcode):
         current_category = [i for i in current_shelf[0].categories if i.code == catcode]
         if current_category:
             books = current_category[0].books
-            return render_template('category.html', data=books, current_category=current_category[0])
+            if request.method == 'POST':
+                binnum = len([k for i in current_user.shelves for j in i.categories for k in j.books]) + 1
+                title = request.form.get('title')
+                author = request.form.get('author')
+                num_in_series = request.form.get('num_in_series')
+                reference = request.form.get('reference')
+                if reference == "":
+                    reference = title[:3]
+                status = request.form.get('status') == 'true'
+                code = str(binnum) + "-" + str(current_category[0].num) + current_category[0].code + "+" + str(num_in_series) + reference.upper()
+                new_book = Book(binnum=binnum, title=title, author=author, num_in_series=num_in_series, reference=reference, status=status, code=code, category=current_category[0])
+                db.session.add(new_book)
+                db.session.commit()
+                return redirect(request.url)
+            return render_template('category.html', data=books, current_category=current_category[0], current_url=request.url)
     return "Shelf or Category does not exist"
 
 @library.route('/shelf/<int:shelfnum>', methods=['GET', 'POST'])
