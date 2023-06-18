@@ -42,7 +42,11 @@
             <td>{{ row.binnum }}</td>
             <td>{{ row.title }}</td>
             <td>{{ row.author }}</td>
-            <td>{{ row.num_in_series }}</td>
+            {% if row.num_in_series %}
+                <td>{{ row.num_in_series }}</td>
+            {% else %}
+                <td>N/A</td>
+            {% endif %}
             <td>{{ row.reference }}</td>
             <td>{{ row.code }}</td>
             {% if row.status %}

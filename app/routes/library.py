@@ -34,8 +34,8 @@ def category(shelfnum, catcode):
                 if reference == "":
                     reference = title[:3]
                 status = request.form.get('status') == 'true'
-                code = str(binnum) + "-" + str(current_category[0].num) + current_category[0].code + "+" + str(num_in_series) + reference.upper()
-                new_book = Book(binnum=binnum, title=title, author=author, num_in_series=num_in_series, reference=reference, status=status, code=code, category=current_category[0])
+                code = str(binnum) + "-" + current_category[0].code + "+" + str(num_in_series) + reference.upper()
+                new_book = Book(binnum=binnum, title=title, author=author, num_in_series=num_in_series, reference=reference.upper(), status=status, code=code, category=current_category[0])
                 db.session.add(new_book)
                 db.session.commit()
                 return redirect(request.url)
