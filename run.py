@@ -1,2 +1,3 @@
-from app import create_app
+from server import create_app
+
 create_app().run(debug=True)
