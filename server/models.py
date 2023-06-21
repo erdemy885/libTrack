@@ -7,7 +7,7 @@ def get_uuid():
 
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(72), nullable=False)
     shelves = db.relationship("Shelf", backref="user")
@@ -21,7 +21,7 @@ class Shelf(db.Model):
 
 
 class Category(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     num = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(4), nullable=False)
@@ -30,7 +30,7 @@ class Category(db.Model):
 
 
 class Book(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(32), primary_key=True, unique=True, default=get_uuid)
     binnum = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(500), nullable=False)
     author = db.Column(db.String(100), nullable=False)

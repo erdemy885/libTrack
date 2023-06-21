@@ -1,4 +1,5 @@
 from flask import Blueprint, request, session, jsonify
+from functools import wraps
 from ..models import User
 from .. import db, bcrypt
 
@@ -6,21 +7,34 @@ from .. import db, bcrypt
 auth = Blueprint("auth", __name__)
 
 
-# @auth.route("/logout")
-# @login_required
-# def logout():
-#     logout_user()
-#     return redirect(url_for("main.home"))
+def login_required(func):
+    @wraps(func)
+    def check_login(*args, **kwargs):
+        user_id = session.get("user_id")
+
+        if not user_id:
+            return jsonify({"error": "Unauthorized"}), 401
+
+        return func(*args, **kwargs)
+
+    return check_login
+
+
+def current_user():
+    return User.query.get(session.get("user_id"))
+
+
+@auth.route("/logout", methods=["POST"])
+@login_required
+def logout():
+    session.pop("user_id")
+    return "200"
 
 
 @auth.route("/@me")
+@login_required
 def get_current_user():
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    user = User.query.filter_by(id=user_id).first()
+    user = current_user()
 
     return jsonify({"id": user.id, "username": user.username})
 
@@ -58,4 +72,4 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"id": new_user.id, "email": new_user.username})
+    return jsonify({"id": new_user.id, "username": new_user.username})
