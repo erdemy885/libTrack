@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 import redis
 
@@ -13,6 +14,7 @@ class ApplicationConfig:
     SQLALCHEMY_DATABASE_URI = "sqlite:///./db.sqlite"
 
     SESSION_TYPE = "redis"
-    SESSION_PERMANENT = False
+    SESSION_PERMANENT = True
+    PERMANENT_SESSION_LIFETIME = timedelta(days=14)
     SESSION_USE_SIGNER = True
     SESSION_REDIS = redis.from_url("redis://127.0.0.1:6379")
