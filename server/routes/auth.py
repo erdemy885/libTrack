@@ -20,10 +20,6 @@ def login_required(func):
     return check_login
 
 
-def current_user():
-    return User.query.get(session.get("user_id"))
-
-
 @auth.route("/logout", methods=["POST"])
 @login_required
 def logout():
@@ -34,7 +30,7 @@ def logout():
 @auth.route("/@me")
 @login_required
 def get_current_user():
-    user = current_user()
+    user = User.query.get(session.get("user_id"))
 
     return jsonify({"id": user.id, "username": user.username})
 
